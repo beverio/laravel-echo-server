@@ -48,14 +48,6 @@ var Server = (function () {
         });
     };
     Server.prototype.httpServer = function (secure) {
-        this.express = express();
-        if (secure) {
-            var httpServer = https.createServer(this.options, this.express);
-        }
-        else {
-            var httpServer = http.createServer(this.express);
-        }
-        httpServer.listen(this.options.port, this.options.host);
         return this.socketServer = new WebSocket.Server({ perMessageDeflate: false, port: this.options.port });
     };
     Server.prototype.authorizeRequests = function () {
