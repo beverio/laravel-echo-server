@@ -3,6 +3,8 @@ import { Channel } from './channels';
 import { Server } from './server';
 import { HttpApi } from './api';
 import { Log } from './log';
+const WebSocket = require('ws');
+
 
 const packageFile = require('../package.json');
 
@@ -163,7 +165,7 @@ export class EchoServer {
      * @return {any}
      */
     find(socket_id: string): any {
-        return this.server.io.sockets.connected[socket_id];
+        return this.server.socketServer.sockets.connected[socket_id];
     }
 
     /**
@@ -190,8 +192,11 @@ export class EchoServer {
      * @return {boolean}
      */
     toOthers(socket: any, channel: string, message: any): boolean {
-        socket.broadcast.to(channel)
-            .emit(message.event, channel, message.data);
+        socket.clients.forEach(function each(client) {
+          if (client !== socket && client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify([channel, message]));
+          }
+        });
 
         return true
     }
@@ -205,8 +210,12 @@ export class EchoServer {
      * @return {boolean}
      */
     toAll(channel: string, message: any): boolean {
-        this.server.io.to(channel)
-            .emit(message.event, channel, message.data);
+
+          this.server.socketServer.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+              client.send(JSON.stringify([channel, message]));
+            }
+          });
 
         return true
     }
@@ -217,7 +226,7 @@ export class EchoServer {
      * @return {void}
      */
     onConnect(): void {
-        this.server.io.on('connection', socket => {
+        this.server.socketServer.on('connection', socket => {
             this.onSubscribe(socket);
             this.onUnsubscribe(socket);
             this.onDisconnecting(socket);

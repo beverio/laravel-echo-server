@@ -3,7 +3,8 @@ var http = require('http');
 var https = require('https');
 var express = require('express');
 var url = require('url');
-var io = require('socket.io');
+//var io = require('socket.io');
+const WebSocket = require('ws');
 import { Log } from './log';
 
 export class Server {
@@ -19,7 +20,7 @@ export class Server {
      *
      * @type {object}
      */
-    public io: any;
+    public socketServer: any;
 
     /**
      * Create a new server instance.
@@ -37,7 +38,7 @@ export class Server {
                 let host = this.options.host || 'localhost';
                 Log.success(`Running at ${host} on port ${this.options.port}`);
 
-                resolve(this.io);
+                resolve(this.socketServer);
             }, error => reject(error));
         });
     }
@@ -95,9 +96,9 @@ export class Server {
 
         httpServer.listen(this.options.port, this.options.host);
 
-        this.authorizeRequests();
+        //this.authorizeRequests();
 
-        return this.io = io(httpServer, this.options.socketio);
+        return this.socketServer = new WebSocket.Server({ perMessageDeflate: false, port: this.options.port });
     }
 
     /**
@@ -183,3 +184,4 @@ export class Server {
         return false;
     }
 }
+;
