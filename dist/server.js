@@ -57,7 +57,7 @@ var Server = (function () {
         }
         httpServer.listen(this.options.port, this.options.host);
         this.authorizeRequests();
-        return this.socketServer = new WebSocket.Server({ server: httpServer, perMessageDeflate: false, port: this.options.port });
+        return this.socketServer = new WebSocket.Server({ server: httpServer, perMessageDeflate: false });
     };
     Server.prototype.authorizeRequests = function () {
         var _this = this;

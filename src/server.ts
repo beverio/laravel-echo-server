@@ -98,7 +98,7 @@ export class Server {
 
         this.authorizeRequests();
 
-        return this.socketServer = new WebSocket.Server({ server: httpServer, perMessageDeflate: false, port: this.options.port });
+        return this.socketServer = new WebSocket.Server({ server: httpServer, perMessageDeflate: false });
     }
 
     /**
