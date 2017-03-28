@@ -48,7 +48,16 @@ var Server = (function () {
         });
     };
     Server.prototype.httpServer = function (secure) {
-        return this.socketServer = new WebSocket.Server({ perMessageDeflate: false, port: this.options.port });
+        this.express = express();
+        if (secure) {
+            var httpServer = https.createServer(this.options, this.express);
+        }
+        else {
+            var httpServer = http.createServer(this.express);
+        }
+        httpServer.listen(this.options.port, this.options.host);
+        this.authorizeRequests();
+        return this.socketServer = new WebSocket.Server({ server: httpServer, perMessageDeflate: false, port: this.options.port });
     };
     Server.prototype.authorizeRequests = function () {
         var _this = this;

@@ -86,19 +86,19 @@ export class Server {
      * @return {any}
      */
     httpServer(secure: boolean) {
-        //this.express = express();
+        this.express = express();
 
-        // if (secure) {
-        //     var httpServer = https.createServer(this.options, this.express);
-        // } else {
-        //     var httpServer = http.createServer(this.express);
-        // }
+        if (secure) {
+            var httpServer = https.createServer(this.options, this.express);
+        } else {
+            var httpServer = http.createServer(this.express);
+        }
 
-        //httpServer.listen(this.options.port, this.options.host);
+        httpServer.listen(this.options.port, this.options.host);
 
-        //this.authorizeRequests();
+        this.authorizeRequests();
 
-        return this.socketServer = new WebSocket.Server({ perMessageDeflate: false, port: this.options.port });
+        return this.socketServer = new WebSocket.Server({ server: httpServer, perMessageDeflate: false, port: this.options.port });
     }
 
     /**
