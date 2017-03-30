@@ -116,6 +116,7 @@ var EchoServer = (function () {
     EchoServer.prototype.onSubscribe = function (socket) {
         var _this = this;
         socket.on('subscribe', function (data) {
+            console.log('subscribed', data);
             _this.channel.join(socket, data);
         });
     };

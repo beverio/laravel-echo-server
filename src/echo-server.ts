@@ -242,6 +242,7 @@ export class EchoServer {
      */
     onSubscribe(socket: any): void {
         socket.on('subscribe', data => {
+            console.log('subscribed', data)
             this.channel.join(socket, data);
         });
     }
